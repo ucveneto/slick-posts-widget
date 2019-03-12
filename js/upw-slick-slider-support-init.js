@@ -1,37 +1,20 @@
-jQuery('.slick').slick({
-  infinite: true,
-  slidesToShow: 2,
-  slidesToScroll: 1,
-  autoplay: true,
-  autoplaySpeed: 2000,
-  centerMode: true,
-  centerPadding: '60px',
-  responsive: [
-    {
-      breakpoint: 1024,
-      settings: {
-        slidesToShow: 3,
-        slidesToScroll: 3,
-        infinite: true,
-        dots: true
-      }
-    },
-    {
-      breakpoint: 600,
-      settings: {
-        slidesToShow: 2,
-        slidesToScroll: 2
-      }
-    },
-    {
-      breakpoint: 480,
-      settings: {
-        slidesToShow: 1,
-        slidesToScroll: 1
-      }
-    }
-    // You can unslick at a given breakpoint now by adding:
-    // settings: "unslick"
-    // instead of a settings object
-  ]
+var sliders = [];
+jQuery( document ).ready( function(){
+  jQuery( '.slick' ).each( function(){
+    var opt = window[jQuery(this).attr('id')];
+    var newops = {
+        infinite: (opt.infinite === '1'),
+        slidesToShow: parseInt(opt.slidesToShow),
+        slidesToScroll: parseInt(opt.slidesToScroll),
+        dots: (opt.dots === '1'),
+        speed: parseInt(opt.speed),
+        centerMode: (opt.centerMode === '1'),
+        variableWidth: (opt.variableWidth === '1'),
+        autoplay: (opt.autoplay === '1'),
+        autoplaySpeed: parseInt(opt.autoplaySpeed),
+        fade: (opt.fade === '1'),
+      };
+      console.log(newops);
+    jQuery(this).slick(newops);
+  });
 });

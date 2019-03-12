@@ -4,7 +4,7 @@ Plugin Name: Slick Posts Widget
 Plugin URI: https://github.com/ucveneto/slick-posts-widget/
 Description: Fork from the slick-posts-widget by Boston Dell-Vandenberg, provides a widget for displaying carousels of posts, custom post types or sticky posts with an array of options. Includes Slick library, version 1.9.0 by Ken Wheeler
 Version: 1.0.0
-Author: Boston Dell-Vandenberg, Ken Wheeler, Samuele Saorin
+Author: Boston Dell-Vandenberg
 Author URI: http://bostondv.com
 Text Domain: upw
 Domain Path: /languages/
@@ -104,6 +104,17 @@ if ( !class_exists( 'WP_Widget_Slick_Posts' ) ) {
       $orderby = $instance['orderby'];
       $meta_key = $instance['meta_key'];
       $custom_fields = $instance['custom_fields'];
+      $slider = [];
+      $slider['infinite'] = $instance['infinite'] ? true : 0;
+      $slider['slidesToShow'] = $instance['slidesToShow'];
+      $slider['slidesToScroll'] = $instance['slidesToScroll'];
+      $slider['dots'] = $instance['dots'] ? true : 0;
+      $slider['speed'] = $instance['speed'];
+      $slider['centerMode'] = $instance['centerMode'] ? true : 0;
+      $slider['variableWidth'] = $instance['variableWidth'] ? true : 0;
+      $slider['autoplay'] = $instance['autoplay'] ? true : 0;
+      $slider['autoplaySpeed'] = $instance['autoplaySpeed'];
+      $slider['fade'] = $instance['fade'] ? true : 0;
 
       // Sticky posts
       if ($sticky == 'only') {
@@ -187,7 +198,6 @@ if ( !class_exists( 'WP_Widget_Slick_Posts' ) ) {
       $args = apply_filters('upw_wp_query_args', $args, $instance, $this->id_base);
 
       $upw_query = new WP_Query($args);
-
       if ($instance['template'] === 'custom') {
         $custom_template_path = apply_filters('upw_custom_template_path',  '/upw/' . $instance['template_custom'] . '.php', $instance, $this->id_base);
         if ( $template = locate_template($custom_template_path) ) {
@@ -211,9 +221,13 @@ if ( !class_exists( 'WP_Widget_Slick_Posts' ) ) {
       }
       wp_cache_set( 'widget_slick_posts', $cache, 'widget' );
 
-      add_action ( 'wp_enqueue_scripts', array( $this, 'slick_slider_support_style' ));
-      add_action ( 'wp_enqueue_scripts', array( $this, 'slick_slider_support_script' ));
-      add_action ( 'wp_enqueue_scripts', array( $this, 'slick_slider_support_init' ));
+      wp_register_style( 'upw-slick-slider-support-style', plugins_url( '/slick/slick.css', __FILE__ ) );
+      wp_enqueue_style( 'upw-slick-slider-support-style' );
+      wp_register_script( 'upw-slick-slider-support-js', plugins_url( '/slick/slick.js', __FILE__ ), array('jquery'), NULL, true);
+      wp_enqueue_script( 'upw-slick-slider-support-js' );
+      wp_register_script( 'upw-slick-slider-support-init', plugins_url( '/js/upw-slick-slider-support-init.js', __FILE__ ) , array( 'upw-slick-slider-support-js' ), NULL, true);
+      wp_enqueue_script( 'upw-slick-slider-support-init' );
+      wp_localize_script('upw-slick-slider-support-init', 'slider_' . str_replace("-", "_", $this->id),  $slider );
 
     }
 
@@ -250,6 +264,17 @@ if ( !class_exists( 'WP_Widget_Slick_Posts' ) ) {
       $instance['custom_fields'] = strip_tags( $new_instance['custom_fields'] );
       $instance['template'] = strip_tags( $new_instance['template'] );
       $instance['template_custom'] = strip_tags( $new_instance['template_custom'] );
+      $instance['infinite'] = isset( $new_instance['infinite'] );
+      $instance['slidesToShow'] = strip_tags( $new_instance['slidesToShow'] );
+      $instance['slidesToScroll'] = strip_tags( $new_instance['slidesToScroll'] );
+      $instance['dots'] = isset( $new_instance['dots'] );
+      $instance['speed'] = strip_tags( $new_instance['speed'] );
+      $instance['centerMode'] = isset( $new_instance['centerMode'] );
+      $instance['variableWidth'] = isset( $new_instance['variableWidth'] );
+      $instance['autoplay'] = isset( $new_instance['autoplay'] );
+      $instance['autoplaySpeed'] = strip_tags( $new_instance['autoplaySpeed'] );
+      $instance['fade'] = isset( $new_instance['fade'] );
+
 
       if (current_user_can('unfiltered_html')) {
         $instance['before_posts'] =  $new_instance['before_posts'];
@@ -311,7 +336,17 @@ if ( !class_exists( 'WP_Widget_Slick_Posts' ) ) {
         'template' => empty($instance['morebutton_text']) ? 'standard' : 'legacy',
         'template_custom' => '',
         'before_posts' => '',
-        'after_posts' => ''
+        'after_posts' => '',
+        'infinite' => true,
+        'slidesToShow' => 3,
+        'slidesToScroll' => 3,
+        'dots' => false,
+        'speed' => 5000,
+        'centerMode' => false,
+        'variableWidth' => false,
+        'autoplay' => true,
+        'autoplaySpeed' => 2000,
+        'fade' => false
       ) );
 
       // Or use the instance
@@ -347,6 +382,16 @@ if ( !class_exists( 'WP_Widget_Slick_Posts' ) ) {
       $template_custom = strip_tags($instance['template_custom']);
       $before_posts = format_to_edit($instance['before_posts']);
       $after_posts = format_to_edit($instance['after_posts']);
+      $infinite = $instance['infinite'];
+      $slidesToShow = $instance['slidesToShow'];
+      $slidesToScroll = $instance['slidesToScroll'];
+      $dots = $instance['dots'];
+      $speed = $instance['speed'];
+      $centerMode = $instance['centerMode'];
+      $variableWidth = $instance['variableWidth'];
+      $autoplay = $instance['autoplay'];
+      $autoplaySpeed = $instance['autoplaySpeed'];
+      $fade = $instance['fade'];
 
       // Let's turn $types, $cats, and $tags into an array if they are set
       if (!empty($types)) $types = explode(',', $types);
@@ -396,6 +441,7 @@ if ( !class_exists( 'WP_Widget_Slick_Posts' ) ) {
         <a class="upw-tab-item" data-toggle="upw-tab-display"><?php _e('Display', 'upw'); ?></a>
         <a class="upw-tab-item" data-toggle="upw-tab-filter"><?php _e('Filter', 'upw'); ?></a>
         <a class="upw-tab-item" data-toggle="upw-tab-order"><?php _e('Order', 'upw'); ?></a>
+        <a class="upw-tab-item" data-toggle="upw-tab-slider"><?php _e('Slider', 'upw'); ?></a>
       </div>
 
       <div class="upw-tab upw-tab-general">
@@ -627,6 +673,59 @@ if ( !class_exists( 'WP_Widget_Slick_Posts' ) ) {
 
       </div>
 
+      <div class="upw-tab upw-hide upw-tab-slider">
+          <p>
+              <input class="checkbox" id="<?php echo $this->get_field_id( 'infinite' ); ?>" name="<?php echo $this->get_field_name( 'infinite' ); ?>" type="checkbox" <?php checked( (bool) $infinite, true ); ?> />
+              <label for="<?php echo $this->get_field_id( 'infinite' ); ?>"><?php _e( 'Infinite scrolling', 'upw' ); ?></label>
+          </p>
+
+          <p>
+            <label for="<?php echo $this->get_field_id('slidesToShow'); ?>"><?php _e( 'Slides to show', 'upw' ); ?>:</label>
+            <input class="widefat" type="number" id="<?php echo $this->get_field_id('slidesToShow'); ?>" name="<?php echo $this->get_field_name('slidesToShow'); ?>" value="<?php echo $slidesToShow; ?>" min="-1" />
+          </p>
+
+          <p>
+            <label for="<?php echo $this->get_field_id('slidesToScroll'); ?>"><?php _e( 'Slides to scroll', 'upw' ); ?>:</label>
+            <input class="widefat" type="number" id="<?php echo $this->get_field_id('slidesToScroll'); ?>" name="<?php echo $this->get_field_name('slidesToScroll'); ?>" value="<?php echo $slidesToScroll; ?>" min="-1" />
+          </p>
+
+          <p>
+              <input class="checkbox" id="<?php echo $this->get_field_id( 'dots' ); ?>" name="<?php echo $this->get_field_name( 'dots' ); ?>" type="checkbox" <?php checked( (bool) $dots, true ); ?> />
+              <label for="<?php echo $this->get_field_id( 'dots' ); ?>"><?php _e( 'Dots', 'upw' ); ?></label>
+          </p>
+
+          <p>
+              <label for="<?php echo $this->get_field_id('speed'); ?>"><?php _e( 'Speed', 'upw' ); ?>:</label>
+              <input class="widefat" type="number" id="<?php echo $this->get_field_id('speed'); ?>" name="<?php echo $this->get_field_name('speed'); ?>" value="<?php echo $speed; ?>" min="-1" />
+          </p>
+
+          <p>
+              <input class="checkbox" id="<?php echo $this->get_field_id( 'centerMode' ); ?>" name="<?php echo $this->get_field_name( 'centerMode' ); ?>" type="checkbox" <?php checked( (bool) $centerMode, true ); ?> />
+              <label for="<?php echo $this->get_field_id( 'centerMode' ); ?>"><?php _e( 'Centermode', 'upw' ); ?></label>
+          </p>
+
+          <p>
+              <input class="checkbox" id="<?php echo $this->get_field_id( 'variableWidth' ); ?>" name="<?php echo $this->get_field_name( 'variableWidth' ); ?>" type="checkbox" <?php checked( (bool) $variableWidth, true ); ?> />
+              <label for="<?php echo $this->get_field_id( 'variableWidth' ); ?>"><?php _e( 'Variable width', 'upw' ); ?></label>
+          </p>
+
+          <p>
+              <input class="checkbox" id="<?php echo $this->get_field_id( 'autoplay' ); ?>" name="<?php echo $this->get_field_name( 'autoplay' ); ?>" type="checkbox" <?php checked( (bool) $autoplay, true ); ?> />
+              <label for="<?php echo $this->get_field_id( 'autoplay' ); ?>"><?php _e( 'Autoplay', 'upw' ); ?></label>
+          </p>
+
+          <p>
+              <label for="<?php echo $this->get_field_id('autoplaySpeed'); ?>"><?php _e( 'Pause before auto scrolling', 'upw' ); ?>:</label>
+              <input class="widefat" type="number" id="<?php echo $this->get_field_id('autoplaySpeed'); ?>" name="<?php echo $this->get_field_name('autoplaySpeed'); ?>" value="<?php echo $autoplaySpeed; ?>" min="-1" />
+          </p>
+
+          <p>
+               <input class="checkbox" id="<?php echo $this->get_field_id( 'fade' ); ?>" name="<?php echo $this->get_field_name( 'fade' ); ?>" type="checkbox" <?php checked( (bool) $fade, true ); ?> />
+               <label for="<?php echo $this->get_field_id( 'fade' ); ?>"><?php _e( 'fade', 'upw' ); ?></label>
+           </p>
+      </div>
+
+
       <p class="upw-credits">
         <?php _e('Enjoy this plugin? <a href="http://bostondv.com/tips/" target="_blank">Send a tip to support development</a>.', 'upw'); ?>
       </p>
@@ -725,21 +824,6 @@ if ( !class_exists( 'WP_Widget_Slick_Posts' ) ) {
 
       }
 
-    }
-
-    function slick_slider_support_style(){
-      wp_register_style( 'upw-slick-slider-support-style', plugins_url( '/slick/slick.css', __FILE__ ) );
-      wp_enqueue_style( 'upw-slick-slider-support-style' );
-    }
-
-    function slick_slider_support_script(){
-      wp_register_script( 'upw-slick-slider-support-js', plugins_url( '/slick/slick.js', __FILE__ ), array('jquery'), NULL, true);
-      wp_enqueue_script( 'upw-slick-slider-support-js' );
-    }
-
-    function slick_slider_support_init(){
-      wp_register_script( 'upw-slick-slider-support-init', plugins_url( '/js/upw-slick-slider-support-init.js', __FILE__ ) , array( 'upw-slick-slider-support-js' ), NULL, true);
-      wp_enqueue_script( 'upw-slick-slider-support-init' );
     }
 
   }

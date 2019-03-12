@@ -4,6 +4,9 @@
  *
  * @version     2.0.0
  */
+
+
+
 ?>
 
 <?php if ($instance['before_posts']) : ?>
@@ -12,7 +15,8 @@
   </div>
 <?php endif; ?>
 
-<div class="upw-posts hfeed slick">
+<div class="upw-posts hfeed slick" id="slider_<?php echo str_replace("-", "_", $this->id); ?>">
+
 
   <?php if ($upw_query->have_posts()) : ?>
 
