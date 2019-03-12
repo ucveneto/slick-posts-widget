@@ -44,10 +44,6 @@ if ( !class_exists( 'WP_Widget_Ultimate_Posts' ) ) {
         add_action('wp_enqueue_scripts', array(&$this, 'enqueue_theme_scripts'));
       }
       
-      add_action ( 'wp_enqueue_scripts', array( $this, 'slick_slider_support_style' ));
-      add_action ( 'wp_enqueue_scripts', array( $this, 'slick_slider_support_script' ));
-      add_action ( 'wp_enqueue_scripts', array( $this, 'slick_slider_support_init' ));
-      
       load_plugin_textdomain('upw', false, basename( dirname( __FILE__ ) ) . '/languages' );
 
     }
@@ -214,6 +210,11 @@ if ( !class_exists( 'WP_Widget_Ultimate_Posts' ) ) {
         $cache[$args['widget_id']] = ob_get_flush();
       }
       wp_cache_set( 'widget_ultimate_posts', $cache, 'widget' );
+      
+      add_action ( 'wp_enqueue_scripts', array( $this, 'slick_slider_support_style' ));
+      add_action ( 'wp_enqueue_scripts', array( $this, 'slick_slider_support_script' ));
+      add_action ( 'wp_enqueue_scripts', array( $this, 'slick_slider_support_init' ));
+      
     }
 
     function update( $new_instance, $old_instance ) {
