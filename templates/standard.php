@@ -12,7 +12,7 @@
   </div>
 <?php endif; ?>
 
-<div class="upw-posts hfeed">
+<div class="upw-posts hfeed slick">
 
   <?php if ($upw_query->have_posts()) : ?>
 
