@@ -1,4 +1,4 @@
-jQuery('.su-posts-wrapper').slick({
+jQuery('.slick').slick({
   infinite: true,
   slidesToShow: 2,
   slidesToScroll: 1,
