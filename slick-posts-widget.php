@@ -2,9 +2,9 @@
 /*
 Plugin Name: Slick Posts Widget
 Plugin URI: https://github.com/ucveneto/slick-posts-widget/
-Description: Fork from the ultimate-posts-widget by Boston Dell-Vandenberg, provides a widget for displaying carousels of posts, custom post types or sticky posts with an array of options.
+Description: Fork from the ultimate-posts-widget by Boston Dell-Vandenberg, provides a widget for displaying carousels of posts, custom post types or sticky posts with an array of options. Includes Slick library, version 1.9.0 by Ken Wheeler
 Version: 1.0.0
-Author: Boston Dell-Vandenberg, Samuele Saorin
+Author: Boston Dell-Vandenberg, Ken Wheeler, Samuele Saorin
 Author URI: http://bostondv.com
 Text Domain: upw
 Domain Path: /languages/
