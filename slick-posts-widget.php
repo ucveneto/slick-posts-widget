@@ -1,10 +1,10 @@
 <?php
 /*
-Plugin Name: Ultimate Posts Widget
-Plugin URI: http://wordpress.org/plugins/ultimate-posts-widget/
-Description: The ultimate widget for displaying posts, custom post types or sticky posts with an array of options.
-Version: 2.0.8
-Author: Boston Dell-Vandenberg
+Plugin Name: Slick Posts Widget
+Plugin URI: https://github.com/ucveneto/slick-posts-widget/
+Description: Fork from the ultimate-posts-widget by Boston Dell-Vandenberg, provides a widget for displaying carousels of posts, custom post types or sticky posts with an array of options.
+Version: 1.0.0
+Author: Boston Dell-Vandenberg, Samuele Saorin
 Author URI: http://bostondv.com
 Text Domain: upw
 Domain Path: /languages/
