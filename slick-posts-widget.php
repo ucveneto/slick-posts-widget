@@ -2,7 +2,7 @@
 /*
 Plugin Name: Slick Posts Widget
 Plugin URI: https://github.com/ucveneto/slick-posts-widget/
-Description: Fork from the ultimate-posts-widget by Boston Dell-Vandenberg, provides a widget for displaying carousels of posts, custom post types or sticky posts with an array of options. Includes Slick library, version 1.9.0 by Ken Wheeler
+Description: Fork from the slick-posts-widget by Boston Dell-Vandenberg, provides a widget for displaying carousels of posts, custom post types or sticky posts with an array of options. Includes Slick library, version 1.9.0 by Ken Wheeler
 Version: 1.0.0
 Author: Boston Dell-Vandenberg, Ken Wheeler, Samuele Saorin
 Author URI: http://bostondv.com
@@ -11,14 +11,14 @@ Domain Path: /languages/
 License: MIT
 */
 
-if ( !class_exists( 'WP_Widget_Ultimate_Posts' ) ) {
+if ( !class_exists( 'WP_Widget_Slick_Posts' ) ) {
 
-  class WP_Widget_Ultimate_Posts extends WP_Widget {
+  class WP_Widget_Slick_Posts extends WP_Widget {
 
     function __construct() {
 
       $widget_options = array(
-        'classname' => 'widget_ultimate_posts',
+        'classname' => 'widget_slick_posts',
         'description' => __( 'Displays list of posts with an array of options', 'upw' )
       );
 
@@ -28,12 +28,12 @@ if ( !class_exists( 'WP_Widget_Ultimate_Posts' ) ) {
 
       parent::__construct(
         'sticky-posts',
-        __( 'Ultimate Posts', 'upw' ),
+        __( 'Slick Posts', 'upw' ),
         $widget_options,
         $control_options
       );
 
-      $this->alt_option_name = 'widget_ultimate_posts';
+      $this->alt_option_name = 'widget_slick_posts';
 
       add_action('save_post', array(&$this, 'flush_widget_cache'));
       add_action('deleted_post', array(&$this, 'flush_widget_cache'));
@@ -43,11 +43,11 @@ if ( !class_exists( 'WP_Widget_Ultimate_Posts' ) ) {
       if (apply_filters('upw_enqueue_styles', true) && !is_admin()) {
         add_action('wp_enqueue_scripts', array(&$this, 'enqueue_theme_scripts'));
       }
-      
+
       load_plugin_textdomain('upw', false, basename( dirname( __FILE__ ) ) . '/languages' );
 
     }
-    
+
     function enqueue_admin_scripts() {
       wp_register_style('upw_admin_styles', plugins_url('css/upw-admin.min.css', __FILE__));
       wp_enqueue_style('upw_admin_styles');
@@ -71,7 +71,7 @@ if ( !class_exists( 'WP_Widget_Ultimate_Posts' ) ) {
         $current_post_id = 0;
       }
 
-      $cache = wp_cache_get( 'widget_ultimate_posts', 'widget' );
+      $cache = wp_cache_get( 'widget_slick_posts', 'widget' );
 
       if ( !is_array( $cache ) )
         $cache = array();
@@ -209,12 +209,12 @@ if ( !class_exists( 'WP_Widget_Ultimate_Posts' ) ) {
       if ($cache) {
         $cache[$args['widget_id']] = ob_get_flush();
       }
-      wp_cache_set( 'widget_ultimate_posts', $cache, 'widget' );
-      
+      wp_cache_set( 'widget_slick_posts', $cache, 'widget' );
+
       add_action ( 'wp_enqueue_scripts', array( $this, 'slick_slider_support_style' ));
       add_action ( 'wp_enqueue_scripts', array( $this, 'slick_slider_support_script' ));
       add_action ( 'wp_enqueue_scripts', array( $this, 'slick_slider_support_init' ));
-      
+
     }
 
     function update( $new_instance, $old_instance ) {
@@ -262,8 +262,8 @@ if ( !class_exists( 'WP_Widget_Ultimate_Posts' ) ) {
       $this->flush_widget_cache();
 
       $alloptions = wp_cache_get( 'alloptions', 'options' );
-      if ( isset( $alloptions['widget_ultimate_posts'] ) )
-        delete_option( 'widget_ultimate_posts' );
+      if ( isset( $alloptions['widget_slick_posts'] ) )
+        delete_option( 'widget_slick_posts' );
 
       return $instance;
 
@@ -271,7 +271,7 @@ if ( !class_exists( 'WP_Widget_Ultimate_Posts' ) ) {
 
     function flush_widget_cache() {
 
-      wp_cache_delete( 'widget_ultimate_posts', 'widget' );
+      wp_cache_delete( 'widget_slick_posts', 'widget' );
 
     }
 
@@ -279,7 +279,7 @@ if ( !class_exists( 'WP_Widget_Ultimate_Posts' ) ) {
 
       // Set default arguments
       $instance = wp_parse_args( (array) $instance, array(
-        'title' => __('Ultimate Posts', 'upw'),
+        'title' => __('Slick Posts', 'upw'),
         'class' => '',
         'title_link' => '' ,
         'number' => '5',
@@ -726,12 +726,12 @@ if ( !class_exists( 'WP_Widget_Ultimate_Posts' ) ) {
       }
 
     }
-    
+
     function slick_slider_support_style(){
       wp_register_style( 'upw-slick-slider-support-style', plugins_url( '/slick/slick.css', __FILE__ ) );
       wp_enqueue_style( 'upw-slick-slider-support-style' );
     }
-    
+
     function slick_slider_support_script(){
       wp_register_script( 'upw-slick-slider-support-js', plugins_url( '/slick/slick.js', __FILE__ ), array('jquery'), NULL, true);
       wp_enqueue_script( 'upw-slick-slider-support-js' );
@@ -741,12 +741,12 @@ if ( !class_exists( 'WP_Widget_Ultimate_Posts' ) ) {
       wp_register_script( 'upw-slick-slider-support-init', plugins_url( '/js/upw-slick-slider-support-init.js', __FILE__ ) , array( 'upw-slick-slider-support-js' ), NULL, true);
       wp_enqueue_script( 'upw-slick-slider-support-init' );
     }
-    
+
   }
 
-  function init_wp_widget_ultimate_posts() {
-    register_widget( 'WP_Widget_Ultimate_Posts' );
+  function init_wp_widget_slick_posts() {
+    register_widget( 'WP_Widget_Slick_Posts' );
   }
 
-  add_action( 'widgets_init', 'init_wp_widget_ultimate_posts' );
+  add_action( 'widgets_init', 'init_wp_widget_slick_posts' );
 }
